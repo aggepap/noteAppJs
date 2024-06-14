@@ -1,42 +1,55 @@
 // Variables
 const dateHeader = document.querySelector("#dateHeader");
-const date = new Date();
-const day = date.getDate();
-const year = date.getFullYear();
 let noteCount = 0;
 const addButton = document.querySelector("#addButton");
 const noteText = document.querySelector(`#noteText-${noteCount}`);
 const delBtn = document.querySelector(".delete-btn");
 let deleteBtns = document.querySelectorAll(".delete-btn");
-// Reset input
+const input = document.querySelector("#input");
+
+// Reset input on load
 input.value = null;
 
-// Date print
-dateHeader.innerHTML = `${date.toLocaleDateString("el-gr", {
-  weekday: "long",
-})}, ${day} ${date.toLocaleString("el-gr", {
-  month: "long",
-})} ${year} <br/> ${date.toLocaleTimeString("el-gr")}`;
+//Get current date and print it in front-end
+function getCurrentDate() {
+  const date = new Date();
+  const day = date.getDate();
+  const year = date.getFullYear();
+  // Date print
+  dateHeader.innerHTML = `${date.toLocaleDateString("el-gr", {
+    weekday: "long",
+  })}, ${day} ${date.toLocaleString("el-gr", {
+    month: "long",
+  })} ${year} <br/> ${date.toLocaleTimeString("en-GB")}`;
+}
+getCurrentDate();
+setInterval(getCurrentDate, 1000);
 
 //Create new note on button press
-addButton.addEventListener("click", () => {
+addButton.addEventListener("click", addNote);
+input.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    addNote();
+  }
+});
+
+function addNote() {
   noteCount++;
-  const input = document.querySelector("#input");
   const mainWindow = document.querySelector("#mainWindow");
   const noteHTMLTemplate = `
-<div class = "note-item" id="item-${noteCount}"> 
-<input type="checkbox" data-count="${noteCount}"name="notecheck" id="notecheck-${noteCount}" class="note-check">
-<span class="note-text" id="noteText-${noteCount}">${input.value}</span>
-<button class="delete-btn" data-count="${noteCount}"  id="deleteBtn-${noteCount}" type="button">X</button>
-</div>
-`;
+  <div class = "note-item" id="item-${noteCount}"> 
+  <input type="checkbox" data-count="${noteCount}"name="notecheck" id="notecheck-${noteCount}" class="note-check">
+  <span class="note-text" id="noteText-${noteCount}">${input.value}</span>
+  <button class="delete-btn" data-count="${noteCount}"  id="deleteBtn-${noteCount}" type="button">X</button>
+  </div>
+  `;
   if (input.value.length === 0) {
     alert("The note is empty");
   } else {
     mainWindow.innerHTML += noteHTMLTemplate;
     input.value = null;
   }
-});
+}
 
 // Event Listeners for deleting existing noted and
 // marking notes as completed
